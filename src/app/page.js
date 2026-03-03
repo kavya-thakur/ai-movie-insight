@@ -183,7 +183,7 @@ export default function Page() {
 
             <motion.div
               layout
-              className={`w-full transition-all duration-1000 ease-[0.16,1,0.3,1] ${
+              className={`w-full transition-all ease-[0.16,1,0.3,1] ${
                 hasData ? "max-w-2xl md:max-w-xl" : "max-w-2xl"
               }`}
             >
@@ -204,7 +204,7 @@ export default function Page() {
 
           {/* CONTENT STAGE */}
           <div
-            className={`transition-all duration-1000 ${hasData ? "mt-10 opacity-100" : "mt-0 opacity-0 pointer-events-none"}`}
+            className={`transition-all ${hasData ? "mt-10 opacity-100" : "mt-0 opacity-0 pointer-events-none"}`}
           >
             <AnimatePresence mode="wait">
               {showSkeleton && (

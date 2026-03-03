@@ -13,7 +13,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          disableTransitionOnChange={false}
+          defaultTheme="system"
+          enableSystem
+        >
           {children}
         </ThemeProvider>
       </body>

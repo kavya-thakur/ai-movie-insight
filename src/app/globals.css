@@ -24,10 +24,13 @@ html {
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  /* Only transition the background-color, NOT the color */
-  transition: background-color 300ms ease;
+  /* Removing the 'ease' and using 'step-start' or a very fast linear transition 
+     can stop the flicker between the background and text */
+  transition: background-color 150ms linear;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+
+  -webkit-backface-visibility: hidden; /* Fixes "shaking" or "flicker" on mobile */
+  backface-visibility: hidden;
 }
 
 /* Ensure all text elements ignore transitions to avoid the 'slow fill' */
@@ -40,4 +43,27 @@ button {
   transition: color 0s !important;
   will-change: color;
   -webkit-font-smoothing: antialiased;
+}
+
+/* 1. Global rendering fix */
+* {
+  /* Forces the GPU to keep everything in a '3D' layer, preventing the blink */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* 2. Stop Framer Motion from fighting with CSS */
+.motion-reduce * {
+  transition: none !important;
+}
+
+/* 3. The theme transition itself */
+body {
+  background-color: hsl(var(--background));
+  /* A very fast linear transition is less likely to flicker than an 'ease' */
+  transition: background-color 0.1s linear;
 }
