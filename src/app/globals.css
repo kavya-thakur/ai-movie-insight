@@ -24,12 +24,20 @@ html {
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  /* Added: This ensures colors update in 200ms instead of the browser default */
-  transition:
-    background-color 200ms ease,
-    color 200ms ease;
+  /* Only transition the background-color, NOT the color */
+  transition: background-color 300ms ease;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure all text elements ignore transitions to avoid the 'slow fill' */
+h1,
+h2,
+p,
+span,
+input,
+button {
+  transition: color 0s !important;
 }
 
 body::after {
@@ -41,4 +49,6 @@ body::after {
   pointer-events: none;
   background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
   filter: contrast(150%) brightness(100%);
+  /* Keep the grain instant so it doesn't 'ghost' during theme swap */
+  transition: none;
 }

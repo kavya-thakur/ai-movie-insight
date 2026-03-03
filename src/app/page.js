@@ -87,8 +87,8 @@ export default function Page() {
 
   return (
     <main
-      className={`relative min-h-screen bg-background text-foreground selection:bg-foreground/10 
-      transition-[background-color,color] duration-300 overflow-x-hidden ${
+      // REMOVE 'transition-colors' or 'transition-all' from here
+      className={`relative min-h-screen bg-background text-foreground selection:bg-foreground/10 overflow-x-hidden ${
         !hasData ? "h-screen overflow-hidden" : "overflow-y-auto"
       }`}
     >
