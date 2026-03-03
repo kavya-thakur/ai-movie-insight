@@ -275,7 +275,7 @@ export default function Page() {
 
   return (
     <main
-      className={`relative transition-colors duration-1000 ${
+      className={`relative ${
         !hasData
           ? "h-screen overflow-hidden"
           : "min-h-screen overflow-y-auto overflow-x-hidden"
@@ -334,7 +334,7 @@ export default function Page() {
 
           {/* SearchBar Stays Focused */}
           <div
-            className={`w-full transition-all duration-700 ${hasData ? "max-w-xl self-end" : "max-w-2xl"}`}
+            className={`w-full transition-all duration-300 ${hasData ? "max-w-xl self-end" : "max-w-2xl"}`}
           >
             <SearchBar
               movieId={movieId}
