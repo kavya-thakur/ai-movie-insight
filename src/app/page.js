@@ -27,12 +27,19 @@ export default function Page() {
   const springY = useSpring(mouseY, { stiffness: 40, damping: 25 });
 
   useEffect(() => {
+    let frameId;
     const handleMouseMove = (e) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      // requestAnimationFrame prevents "over-firing" the movement
+      frameId = requestAnimationFrame(() => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      });
     };
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(frameId);
+    };
   }, [mouseX, mouseY]);
 
   const handleSearch = async () => {
@@ -80,7 +87,8 @@ export default function Page() {
 
   return (
     <main
-      className={`relative min-h-screen bg-background text-foreground selection:bg-foreground/10 transition-colors duration-1000 overflow-x-hidden ${
+      className={`relative min-h-screen bg-background text-foreground selection:bg-foreground/10 
+      transition-[background-color,color] duration-300 overflow-x-hidden ${
         !hasData ? "h-screen overflow-hidden" : "overflow-y-auto"
       }`}
     >
@@ -94,7 +102,8 @@ export default function Page() {
             translateX: "-50%",
             translateY: "-50%",
           }}
-          className="absolute w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-foreground/[0.03] blur-[120px] rounded-full will-change-transform"
+          // Added: 'hidden md:block' so the phone doesn't try to render this heavy blur
+          className="hidden md:block absolute w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-foreground/[0.03] blur-[120px] rounded-full will-change-transform"
         />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-full bg-gradient-to-b from-foreground/[0.02] to-transparent blur-[120px]" />
       </div>
@@ -102,14 +111,13 @@ export default function Page() {
       <div className="mx-auto max-w-7xl px-8 relative overflow-x-hidden">
         <div
           className={`flex flex-col transition-all duration-[1200ms] ease-[0.16,1,0.3,1] ${
-            !hasData ? "pt-[24vh]" : "pt-20"
+            !hasData ? "pt-[14vh] md:pt-[24vh]" : "pt-20"
           }`}
         >
           {/* HEADER & HERO SECTION */}
           <motion.div
             layout
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            // FIX: Added 'items-center' to both states and adjusted justify
             className={`flex flex-col w-full ${hasData ? "md:flex-row md:items-center md:justify-between gap-8" : "items-center"}`}
           >
             <AnimatePresence mode="popLayout">
@@ -198,7 +206,7 @@ export default function Page() {
 
           {/* CONTENT STAGE */}
           <div
-            className={`transition-all duration-1000 ${hasData ? "mt-32 opacity-100" : "mt-0 opacity-0 pointer-events-none"}`}
+            className={`transition-all duration-1000 ${hasData ? "mt-10 opacity-100" : "mt-0 opacity-0 pointer-events-none"}`}
           >
             <AnimatePresence mode="wait">
               {showSkeleton && (

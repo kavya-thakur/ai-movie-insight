@@ -24,6 +24,10 @@ html {
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  /* Added: This ensures colors update in 200ms instead of the browser default */
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
