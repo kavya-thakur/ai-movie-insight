@@ -287,7 +287,7 @@ export default function Page() {
       <div className="mx-auto max-w-7xl px-8 relative z-10 h-full flex flex-col">
         {/* HERO & SEARCH BLOCK */}
         <div
-          className={`flex flex-col transition-all duration-[1000ms] ease-[0.16,1,0.3,1] ${
+          className={`flex flex-col  ease-[0.16,1,0.3,1] ${
             !hasData
               ? "flex-1 justify-center items-center pt-24"
               : "pt-32 mb-20"
