@@ -87,7 +87,6 @@ export default function Page() {
 
   return (
     <main
-      // REMOVE 'transition-colors' or 'transition-all' from here
       className={`relative min-h-screen bg-background text-foreground selection:bg-foreground/10 overflow-x-hidden ${
         !hasData ? "h-screen overflow-hidden" : "overflow-y-auto"
       }`}
@@ -102,7 +101,6 @@ export default function Page() {
             translateX: "-50%",
             translateY: "-50%",
           }}
-          // Added: 'hidden md:block' so the phone doesn't try to render this heavy blur
           className="hidden md:block absolute w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-foreground/[0.03] blur-[120px] rounded-full will-change-transform"
         />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-full bg-gradient-to-b from-foreground/[0.02] to-transparent blur-[120px]" />

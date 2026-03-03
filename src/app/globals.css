@@ -38,17 +38,6 @@ span,
 input,
 button {
   transition: color 0s !important;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  opacity: 0.03;
-  z-index: -1;
-  pointer-events: none;
-  background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-  filter: contrast(150%) brightness(100%);
-  /* Keep the grain instant so it doesn't 'ghost' during theme swap */
-  transition: none;
+  will-change: color;
+  -webkit-font-smoothing: antialiased;
 }

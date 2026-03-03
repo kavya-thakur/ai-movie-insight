@@ -15,8 +15,7 @@ export default function MovieCard({ movie }) {
       animate={{ opacity: 1 }}
       className="relative w-full group flex flex-col lg:flex-row gap-16 items-start py-12"
     >
-      {/* 1. AMBIENT BACKGROUND GLOW (The "Pro" Secret) */}
-      <div className="absolute -left-20 top-0 w-[500px] h-[500px] bg-foreground/[0.03] blur-[150px] -z-10 rounded-full transition-colors duration-1000" />
+      <div className="absolute -left-20 top-0 w-[500px] h-[500px] bg-foreground/[0.03] blur-[150px] -z-10 rounded-full " />
 
       {/* 2. THE POSTER: Cinematic Frame */}
       <motion.div
