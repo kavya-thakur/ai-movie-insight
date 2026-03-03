@@ -114,7 +114,7 @@ export default function Page() {
                 transition={{ duration: 0.4 }}
                 className="text-center mb-12 pointer-events-none"
               >
-                <h1 className="text-[12vw] lg:text-[11rem] font-light tracking-tightest leading-[0.8]">
+                <h1 className="text-[17vw] lg:text-[11rem] font-light tracking-tightest leading-[0.8]">
                   Cinema
                   <span className="block font-serif italic text-foreground/20 -mt-2 ml-4">
                     Intel.
