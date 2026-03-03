@@ -17,23 +17,28 @@
     --muted: 240 5% 7%;
   }
 }
-html {
-  scrollbar-gutter: stable;
-}
 
+html,
 body {
+  /* This ensures the scroll container always knows its true height */
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden;
+  /* Smooth out the background color change */
   background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  /* Removing the 'ease' and using 'step-start' or a very fast linear transition 
-     can stop the flicker between the background and text */
-  transition: background-color 150ms linear;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-
-  -webkit-backface-visibility: hidden; /* Fixes "shaking" or "flicker" on mobile */
-  backface-visibility: hidden;
+  transition: background-color 0.2s linear;
 }
 
-/* Ensure all text elements ignore transitions to avoid the 'slow fill' */
+/* STOP: Remove the * { transform: translateZ(0) } rule. It's killing your scroll. */
+
+/* TARGETED GPU acceleration for the flicker-prone elements only */
+.flicker-fix {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Instant color switch for text */
 h1,
 h2,
 p,
@@ -41,29 +46,16 @@ span,
 input,
 button {
   transition: color 0s !important;
-  will-change: color;
-  -webkit-font-smoothing: antialiased;
 }
 
-/* 1. Global rendering fix */
-* {
-  /* Forces the GPU to keep everything in a '3D' layer, preventing the blink */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  perspective: 1000;
-}
-
-/* 2. Stop Framer Motion from fighting with CSS */
-.motion-reduce * {
-  transition: none !important;
-}
-
-/* 3. The theme transition itself */
-body {
-  background-color: hsl(var(--background));
-  /* A very fast linear transition is less likely to flicker than an 'ease' */
-  transition: background-color 0.1s linear;
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+  /* Keep texture static to prevent repaint lag */
+  transition: none;
 }
