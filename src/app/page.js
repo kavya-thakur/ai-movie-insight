@@ -8,10 +8,10 @@ import {
   useMotionValue,
 } from "framer-motion";
 import Navbar from "./components/Navbar";
-import SearchBar from "./components/SearchBar";
 import MovieCard from "./components/MovieCard";
 import Sentiment from "./components/Sentiment";
 import LoadingSkeleton from "./components/LoadingSkeleton";
+import SearchHeader from "./components/SearchBar";
 
 const BackgroundEffect = memo(({ springX, springY }) => (
   <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-background">
@@ -138,7 +138,7 @@ export default function Page() {
           <div
             className={`w-full transition-all duration-500 ${hasData ? "max-w-xl self-end" : "max-w-2xl"}`}
           >
-            <SearchBar
+            <SearchHeader
               movieId={movieId}
               setMovieId={setMovieId}
               onSearch={handleSearch}
