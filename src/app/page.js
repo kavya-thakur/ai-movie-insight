@@ -1,65 +1,240 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useSpring,
+  useMotionValue,
+} from "framer-motion";
+import Navbar from "./components/Navbar";
+import SearchBar from "./components/SearchBar";
+import MovieCard from "./components/MovieCard";
+import Sentiment from "./components/Sentiment";
+import LoadingSkeleton from "./components/LoadingSkeleton";
+import ErrorState from "./components/ErrorState";
+
+export default function Page() {
+  const [movieId, setMovieId] = useState("");
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 40, damping: 25 });
+  const springY = useSpring(mouseY, { stiffness: 40, damping: 25 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  const handleSearch = async () => {
+    const cleanId = movieId.trim();
+
+    // 1. IMMEDIATE RESET: Clear previous results and errors the moment the button is clicked
+    setError("");
+
+    // 2. VALIDATION: Check if empty
+    if (!cleanId) {
+      setData(null); // Clear the old movie so it doesn't stay on screen
+      setError("Entry Required");
+      return;
+    }
+
+    // 3. VALIDATION: Check IMDb format
+    if (!/^tt\d+/.test(cleanId)) {
+      setData(null); // Clear the old movie so it doesn't stay on screen
+      setError("Invalid ID (use tt0000000)");
+      return;
+    }
+
+    // --- Proceed only if validation passes ---
+    setLoading(true);
+    setData(null); // Ensure the stage is empty for the new movie
+
+    const timer = setTimeout(() => setShowSkeleton(true), 120);
+
+    try {
+      const res = await fetch(`/api/movie?imdbId=${cleanId}`);
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Registry error");
+      setData(result);
+    } catch (err) {
+      setError(err.message);
+      setData(null);
+    } finally {
+      clearTimeout(timer);
+      setLoading(false);
+      setShowSkeleton(false);
+    }
+  };
+  // Change this line in your Page function
+  const hasData = (!!data || loading) && !error;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main
+      className={`relative min-h-screen bg-background text-foreground selection:bg-foreground/10 transition-colors duration-1000 overflow-x-hidden ${
+        !hasData ? "h-screen overflow-hidden" : "overflow-y-auto"
+      }`}
+    >
+      <Navbar />
+
+      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden h-screen w-screen">
+        <motion.div
+          style={{
+            left: springX,
+            top: springY,
+            translateX: "-50%",
+            translateY: "-50%",
+          }}
+          className="absolute w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-foreground/[0.03] blur-[120px] rounded-full will-change-transform"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-full bg-gradient-to-b from-foreground/[0.02] to-transparent blur-[120px]" />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-8 relative overflow-x-hidden">
+        <div
+          className={`flex flex-col transition-all duration-[1200ms] ease-[0.16,1,0.3,1] ${
+            !hasData ? "pt-[24vh]" : "pt-20"
+          }`}
+        >
+          {/* HEADER & HERO SECTION */}
+          <motion.div
+            layout
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            // FIX: Added 'items-center' to both states and adjusted justify
+            className={`flex flex-col w-full ${hasData ? "md:flex-row md:items-center md:justify-between gap-8" : "items-center"}`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <AnimatePresence mode="popLayout">
+              {!hasData ? (
+                <motion.div
+                  key="hero-text"
+                  className="text-center mb-4 pointer-events-none"
+                >
+                  <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] font-light tracking-tightest leading-none">
+                    {/* Cinema - Slided up from mask */}
+                    <div className="inline-block overflow-hidden align-bottom py-1">
+                      <motion.span
+                        initial={{ y: "100%", filter: "blur(10px)" }}
+                        animate={{ y: 0, filter: "blur(0px)" }}
+                        transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+                        className="inline-block"
+                      >
+                        Cinema
+                      </motion.span>
+                    </div>{" "}
+                    {/* Intel - Blurs in gracefully next to it */}
+                    <motion.span
+                      initial={{ opacity: 0, filter: "blur(20px)" }}
+                      animate={{ opacity: 0.4, filter: "blur(0px)" }}
+                      transition={{
+                        duration: 0.9,
+                        delay: 0.4,
+                        ease: "easeOut",
+                      }}
+                      className="font-serif italic inline-block"
+                    >
+                      Intel.
+                    </motion.span>
+                  </h1>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 1 }}
+                    className="mt-8 flex flex-col items-center gap-6"
+                  >
+                    <div className="h-px w-16 bg-foreground/10" />
+                    <p className="text-[10px] uppercase tracking-[0.8em] font-medium opacity-70">
+                      Registry Access • AI Audience Synthesis
+                    </p>
+                  </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="active-title"
+                  initial={{ opacity: 0, x: -20, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="mb-4 md:mb-0"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.5em] font-black opacity-10 mb-1">
+                    Intelligence Result
+                  </p>
+                  <h1 className="text-4xl md:text-5xl font-light tracking-tighter italic leading-none">
+                    Archive.
+                  </h1>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <motion.div
+              layout
+              className={`w-full transition-all duration-1000 ease-[0.16,1,0.3,1] ${
+                hasData ? "max-w-2xl md:max-w-xl" : "max-w-2xl"
+              }`}
+            >
+              <div className="w-full flex justify-end">
+                {" "}
+                <SearchBar
+                  movieId={movieId}
+                  setMovieId={setMovieId}
+                  onSearch={handleSearch}
+                  isLoading={loading}
+                  hasData={hasData}
+                  error={error}
+                  setError={setError}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* CONTENT STAGE */}
+          <div
+            className={`transition-all duration-1000 ${hasData ? "mt-32 opacity-100" : "mt-0 opacity-0 pointer-events-none"}`}
           >
-            Documentation
-          </a>
+            <AnimatePresence mode="wait">
+              {showSkeleton && (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <LoadingSkeleton />
+                </motion.div>
+              )}
+
+              {error && !loading && (
+                <ErrorState key="error" message={error} retry={handleSearch} />
+              )}
+
+              {data && !loading && (
+                <motion.div
+                  key="results"
+                  initial={{ opacity: 0, filter: "blur(30px)", y: 60 }}
+                  animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                  transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-20 pb-20"
+                >
+                  <MovieCard movie={data.movie} />
+                  <Sentiment
+                    summary={data.aiSummary}
+                    sentiment={data.sentiment}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
