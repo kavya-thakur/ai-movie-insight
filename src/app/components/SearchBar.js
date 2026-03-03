@@ -28,7 +28,7 @@ export default function SearchHeader({
 
           <motion.h1
             layout="position"
-            className={`font-light tracking-tighter leading-none transition-colors duration-700 ${
+            className={`font-light tracking-tighter leading-none ${
               hasData ? "text-5xl md:text-6xl" : "text-7xl md:text-[9rem]"
             }`}
           >
