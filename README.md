@@ -63,7 +63,7 @@ Real-time analysis of cinematic data to provide instant emotional context and an
 3.  **Configure Environment Variables**
     Create a `.env.local` file in the root and add your API keys:
     ```env
-    NEXT_PUBLIC_OMDB_API_KEY=your_omdb_key_here
+    OMDB_API_KEY=c8d6a620
     ```
 
 4.  **Production Build**
@@ -71,7 +71,19 @@ Real-time analysis of cinematic data to provide instant emotional context and an
     npm run build
     npm start
     ```
+---
 
+## 🧪 Testing
+The project uses **Jest** and **React Testing Library** to ensure component stability and interaction logic.
+
+### Running Tests
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+```
 ---
 
 ## 📱 Mobile Experience
