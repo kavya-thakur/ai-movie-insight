@@ -21,7 +21,6 @@ export default function ThemeToggle() {
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          // 3. The key is what Framer Motion uses to track the change
           key={theme}
           initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}

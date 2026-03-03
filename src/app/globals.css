@@ -20,25 +20,19 @@
 
 html,
 body {
-  /* This ensures the scroll container always knows its true height */
   height: auto !important;
   min-height: 100% !important;
   overflow-x: hidden;
-  /* Smooth out the background color change */
   background-color: hsl(var(--background));
   transition: background-color 0.2s linear;
 }
 
-/* STOP: Remove the * { transform: translateZ(0) } rule. It's killing your scroll. */
-
-/* TARGETED GPU acceleration for the flicker-prone elements only */
 .flicker-fix {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
 }
 
-/* Instant color switch for text */
 h1,
 h2,
 p,
@@ -56,6 +50,5 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-  /* Keep texture static to prevent repaint lag */
   transition: none;
 }

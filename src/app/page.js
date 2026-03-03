@@ -413,28 +413,22 @@ export default function Page() {
             </div>
           </motion.div>
 
-          {/* CONTENT STAGE */}
-          {/* CONTENT STAGE */}
           <div
             className={`w-full relative ${
               hasData
-                ? "mt-10 opacity-100"
+                ? " mt-0 md:mt-10 opacity-100"
                 : "mt-0 opacity-0 pointer-events-none"
             }`}
-            /* This style forces the browser to recalculate height immediately */
             style={{ minHeight: hasData ? "auto" : "0px" }}
           >
             <AnimatePresence mode="wait">
-              {/* ... Loading and Error states ... */}
-
               {data && !loading && (
                 <motion.div
                   key="results"
-                  /* Removed the heavy blur transition which causes scroll-lag */
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="space-y-20 pb-20 overflow-visible"
+                  className="overflow-visible"
                 >
                   <MovieCard movie={data.movie} />
                   <Sentiment
